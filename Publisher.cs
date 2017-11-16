@@ -39,7 +39,7 @@ class Publisher
             publishInterval = Convert.ToInt32(publishIntervalStr) * 1000;
         }
 
-        Console.WriteLine("Message publish interval is {0} ms", publishInterval);
+        Console.WriteLine("Message publish interval is {0} s", publishInterval);
 
         IServiceCollection services = new ServiceCollection();
         var config = new ConfigurationBuilder()
