@@ -14,6 +14,20 @@ class Publisher
         int numMsgsPublished = 1;
 
         // Set default interval to publish messages
+        ushort heartbeatInterval = 20;
+        string heartbeatIntervalStr = Environment.GetEnvironmentVariable("HEARTBEAT_INTERVAL_SEC");
+        if (heartbeatIntervalStr == null)
+        {
+            Console.WriteLine("HEARTBEAT_INTERVAL_SEC environment variable not defined, using default.");
+        }
+        else
+        {
+            heartbeatInterval = Convert.ToUInt16(heartbeatIntervalStr);
+        }
+
+        Console.WriteLine("Setting heartbeat interval to {0} ms", heartbeatInterval);
+
+        // Set default interval to publish messages
         int publishInterval = 600000;
         string publishIntervalStr = Environment.GetEnvironmentVariable("PUBLISH_INTERVAL_SEC");
         if (publishIntervalStr == null)
@@ -34,6 +48,12 @@ class Publisher
             .Build();
         services.AddRabbitConnection(config);
         var factory = services.BuildServiceProvider().GetService<ConnectionFactory>();
+
+        // No need to explicitly set this value, default is already true
+        // factory.AutomaticRecoveryEnabled = true;
+
+        // Reduce the heartbeat interval so that bad connections are detected sooner than the default of 60s
+        factory.RequestedHeartbeat = heartbeatInterval;
 
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())

@@ -10,4 +10,5 @@ applications:
   services:
    - rabbit-svc
   env:
-    PUBLISH_INTERVAL_SEC: 10
+    HEARTBEAT_INTERVAL_SEC: 20
+    PUBLISH_INTERVAL_SEC: 600
