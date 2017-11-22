@@ -28,10 +28,10 @@ class Publisher
             heartbeatInterval = Convert.ToUInt16(heartbeatIntervalStr);
         }
 
-        Console.WriteLine("Setting heartbeat interval to {0} ms", heartbeatInterval);
+        Console.WriteLine("Setting heartbeat interval to {0} s", heartbeatInterval);
 
         // Set default interval to publish messages
-        int publishInterval = 600000;
+        int publishIntervalSec = 600;
         string publishIntervalStr = Environment.GetEnvironmentVariable("PUBLISH_INTERVAL_SEC");
         if (publishIntervalStr == null)
         {
@@ -39,10 +39,11 @@ class Publisher
         }
         else
         {
-            publishInterval = Convert.ToInt32(publishIntervalStr) * 1000;
+            publishIntervalSec = Convert.ToInt32(publishIntervalStr);
         }
 
-        Console.WriteLine("Message publish interval is {0} s", publishInterval);
+        Console.WriteLine("Message publish interval is {0} s", publishIntervalSec);
+        int publishInterval = publishIntervalSec * 1000;
 
         IServiceCollection services = new ServiceCollection();
         var config = new ConfigurationBuilder()
