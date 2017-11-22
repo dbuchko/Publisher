@@ -4,6 +4,7 @@ using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Logging;
 using Steeltoe.CloudFoundry.Connector.Rabbit;
 using Steeltoe.Extensions.Configuration;
 
@@ -11,6 +12,8 @@ class Publisher
 {
     public static void Main(string[] args)
     {
+        RabbitMqConsoleEventListener loggingEventSource = new RabbitMqConsoleEventListener();
+
         int numMsgsPublished = 1;
 
         // Set default interval to publish messages
