@@ -45,13 +45,18 @@ class Publisher
         Console.WriteLine("Message publish interval is {0} s", publishIntervalSec);
         int publishInterval = publishIntervalSec * 1000;
 
-        IServiceCollection services = new ServiceCollection();
-        var config = new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .AddCloudFoundry()
-            .Build();
-        services.AddRabbitConnection(config);
-        var factory = services.BuildServiceProvider().GetService<ConnectionFactory>();
+        var factory = new ConnectionFactory() { HostName = "localhost" };
+        if (Environment.GetEnvironmentVariable("VCAP_SERVICES") != null)
+        {
+            // Running on PCF
+            IServiceCollection services = new ServiceCollection();
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .AddCloudFoundry()
+                .Build();
+            services.AddRabbitConnection(config);
+            factory = services.BuildServiceProvider().GetService<ConnectionFactory>();
+        }
 
         // No need to explicitly set this value, default is already true
         // factory.AutomaticRecoveryEnabled = true;
