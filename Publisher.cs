@@ -45,7 +45,14 @@ class Publisher
         Console.WriteLine("Message publish interval is {0} s", publishIntervalSec);
         int publishInterval = publishIntervalSec * 1000;
 
-        var factory = new ConnectionFactory() { HostName = "localhost" };
+        int port = 5672;
+        string portStr = Environment.GetEnvironmentVariable("RABBITMQ_NODE_PORT");
+        if (portStr != null)
+        {
+            port = Convert.ToInt32(portStr);
+        }
+
+        var factory = new ConnectionFactory() { HostName = "localhost", Port = port };
         if (Environment.GetEnvironmentVariable("VCAP_SERVICES") != null)
         {
             // Running on PCF
