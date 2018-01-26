@@ -10,6 +10,8 @@ using Steeltoe.Extensions.Configuration;
 
 class Publisher
 {
+    private static string taskQueueName;
+
     public static void Main(string[] args)
     {
         RabbitMqConsoleEventListener loggingEventSource = new RabbitMqConsoleEventListener();
@@ -65,6 +67,14 @@ class Publisher
             factory = services.BuildServiceProvider().GetService<ConnectionFactory>();
         }
 
+
+        taskQueueName = Environment.GetEnvironmentVariable("QUEUE_NAME");
+        if (taskQueueName == null)
+        {
+            taskQueueName = "task_queue";
+        }
+        Console.WriteLine("Setting queue name to {0}", taskQueueName);
+
         // No need to explicitly set this value, default is already true
         // factory.AutomaticRecoveryEnabled = true;
 
@@ -79,7 +89,7 @@ class Publisher
         using (var connection = factory.CreateConnection())
         using (var channel = connection.CreateModel())
         {
-            channel.QueueDeclare(queue: "task_queue", durable: true, exclusive: false, autoDelete: false, arguments: null);
+            channel.QueueDeclare(queue: taskQueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
             var message = "Happy Birthday!!";
             var body = Encoding.UTF8.GetBytes(message);
@@ -89,7 +99,7 @@ class Publisher
 
             while (true)
             {
-                channel.BasicPublish(exchange: "", routingKey: "task_queue", basicProperties: properties, body: body);
+                channel.BasicPublish(exchange: "", routingKey: taskQueueName, basicProperties: properties, body: body);
                 Console.WriteLine("Published {0} messages", numMsgsPublished++);
                 Thread.Sleep(publishInterval);
             }

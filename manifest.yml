@@ -1,7 +1,7 @@
 ﻿---
 applications:
 - name: publisher
-  memory: 128M
+  memory: 256M
   instances: 1
   path: .
   buildpack: dotnet_core_buildpack
@@ -12,3 +12,4 @@ applications:
   env:
     HEARTBEAT_INTERVAL_SEC: 20
     PUBLISH_INTERVAL_SEC: 600
+    QUEUE_NAME: task_queue
